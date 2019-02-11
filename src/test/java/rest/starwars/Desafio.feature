@@ -28,6 +28,7 @@ Then status 200
 And match film.characters !contains yoda.url
 
 
+
 @teste
 Scenario: Valide se existe um filme com maior número de planetas sem habitantes do que os demais
 
@@ -35,6 +36,22 @@ Scenario: Valide se existe um filme com maior número de planetas sem habitantes
 Given path "planets"
 When method GET
 Then status 200
+  * def planetsRequest = read("classpath:rest/starwars/Planet.feature")
+  * def planetsFn =
+    """
+    function(count) {
+      var out = [];
+      for (var i = 1; i <= count; i++) {
+        out.push({planetPath: 'planets/' + i});
+      }
+      return out;
+    }
+    """
+
+  * def planetsPath = call planetsFn response.count
+  * def result = call planetsRequest planetsPath
+  * def planets = $result[*].response[?(@.residents==[])]
+  * print planets
 
 
 
